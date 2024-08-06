@@ -5,11 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:scdUnpack"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Closing="Window_Closing">
+        Title="MainWindow" Height="800" Width="800" Closing="Window_Closing">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="247*"/>
+            <ColumnDefinition Width="10*"/>
+            <ColumnDefinition Width="378*"/>
             <ColumnDefinition Width="auto"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -18,27 +20,31 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
-        <Label Grid.Row="0" Grid.Column="0" Content="Mods Path" Height="28" VerticalAlignment="Top" Width="123"/>
-        <StackPanel Grid.Row="0" Grid.Column="1" x:Name="ModsPathText" Orientation="Horizontal"/>
-        <Button Grid.Row="0" Grid.Column="2" x:Name="ModsPathButton" Content="Browse" Click="ModsPathButton_Click"/>
+        <Label Grid.Column="0" Content="Mods Path" Height="28" VerticalAlignment="Center" Width="123"/>
+        <StackPanel Grid.Row="0" Grid.Column="1" x:Name="ModsPathText" Orientation="Horizontal" Grid.ColumnSpan="4" Margin="0,0,42,0"/>
+        <Button Grid.Row="0" Grid.Column="4" x:Name="ModsPathButton" Content="Browse" Click="ModsPathButton_Click"/>
         <ListView Grid.Row="1" Grid.Column="1" x:Name="ModsView" 
-                  MouseDoubleClick="UnpackView_MouseDoubleClick">
+                  MouseDoubleClick="UnpackView_MouseDoubleClick" 
+                  MouseUp="View_MouseUp"
+                  Grid.ColumnSpan="4" Margin="0,0,42,0">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Path=Name}"/>
+                    <GridViewColumn Header="Kind" DisplayMemberBinding="{Binding Path=Kind}"/>
                     <GridViewColumn Header="Unpacked" DisplayMemberBinding="{Binding Path=Unpacked}"/>
                 </GridView>
             </ListView.View>
         </ListView>
-        <Label Grid.Row="2" Grid.Column="0" Content="Game Path" Height="28" VerticalAlignment="Top" Width="123"/>
-        <StackPanel Grid.Row="2" Grid.Column="1" x:Name="GamePathText" Orientation="Horizontal" />
-        <Button Grid.Row="2" Grid.Column="2" x:Name="GamePathButton" Content="Browse" Click="GamePathButton_Click" />
+        <Label Grid.Row="2" Grid.Column="0" Content="Game Path" Height="28" VerticalAlignment="Center" Width="123"/>
+        <StackPanel Grid.Row="2" Grid.Column="1" x:Name="GamePathText" Orientation="Horizontal" Grid.ColumnSpan="4" Margin="0,0,42,0" />
+        <Button Grid.Row="2" Grid.Column="4" x:Name="GamePathButton" Content="Browse" Click="GamePathButton_Click" />
 
         <ListView Grid.Row="3" Grid.Column="1" x:Name="GameView" 
-                  MouseDoubleClick="UnpackView_MouseDoubleClick">
+                  MouseDoubleClick="UnpackView_MouseDoubleClick" Grid.ColumnSpan="4" Margin="0,0,42,0">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Path=Name}"/>
+                    <GridViewColumn Header="Kind" DisplayMemberBinding="{Binding Path=Kind}"/>
                     <GridViewColumn Header="Unpacked" DisplayMemberBinding="{Binding Path=Unpacked}"/>
                 </GridView>
             </ListView.View>

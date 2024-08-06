@@ -23,6 +23,7 @@ namespace scdUnpack
     public partial class MainWindow : Window
     {
         private readonly ScdUnpackSettings settings;
+        private bool viewsInitialized = false;
 
         public MainWindow()
         {
@@ -30,22 +31,19 @@ namespace scdUnpack
             settings = ScdUnpackSettings.Load();
             ModsView.ItemsSource = new UnpackItems
             {
+                SettingName = "ModsPath",
                 RootPath = settings.ModsPath,
-                Ext = "*.sc2",
                 Settings = settings,
                 StackPanelPath = ModsPathText
             };
             GameView.ItemsSource = new UnpackItems
             {
+                SettingName = "GamePath",
                 RootPath = settings.GamePath,
-                Ext = "*.scd",
                 Settings = settings,
                 StackPanelPath = GamePathText
             };
 
-
-            ((CollectionView)CollectionViewSource.GetDefaultView(ModsView.ItemsSource)).SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
-            ((CollectionView)CollectionViewSource.GetDefaultView(GameView.ItemsSource)).SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
             LoadItems();
         }
 
@@ -64,8 +62,22 @@ namespace scdUnpack
             foreach (var listView in new[] { ModsView, GameView })
             {
                 var items = (UnpackItems)listView.ItemsSource;
+                if (!viewsInitialized)
+                {
+                    listView.ContextMenu = new ContextMenu();
+                    listView.ContextMenu.Items.Add(new MenuItem { Header = "Pack" });
+                    listView.ContextMenu.Items.Add(new MenuItem { Header = "Unpack" });
+                    foreach(MenuItem menuItem in listView.ContextMenu.Items)
+                    {
+                        menuItem.Click += HandleMenuClick;
+                    }
+                    ((CollectionView)CollectionViewSource.GetDefaultView(listView.ItemsSource))
+                        .SortDescriptions
+                        .Add(new SortDescription("Name", ListSortDirection.Ascending));
+                }
                 items.Load();
             }
+            viewsInitialized = true;
         }
         private void Window_Closing(object sender, CancelEventArgs e)
         {
@@ -77,6 +89,43 @@ namespace scdUnpack
             var item = ((ListView)sender).SelectedValue as UnpackItem;
             Debug.Assert(item != null);
             item.Toggle();
+        }
+
+        private void HandleMenuClick(object sender, RoutedEventArgs e)
+        {
+            var menuItem = (MenuItem)sender;
+            var item = menuItem.Tag as UnpackItem;
+            Debug.Assert(item != null);
+            switch (menuItem.Header)
+            {
+                case "Pack":
+                    item.Pack();
+                    break;
+                case "Unpack":
+                    item.Unpack();
+                    break;
+            }
+        }
+        private void View_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Right)
+            {
+                var listView = (ListView)sender;
+                var selected = (UnpackItem)listView.SelectedItem;
+                foreach (MenuItem menuItem in listView.ContextMenu.Items)
+                {
+                    menuItem.Tag = selected;
+                    switch (menuItem.Header)
+                    {
+                        case "Pack":
+                            menuItem.IsEnabled = selected.Kind == UnpackKind.Directory;
+                            break;
+                        case "Unpack":
+                            menuItem.IsEnabled = selected.Kind != UnpackKind.Directory;
+                            break;
+                    }
+                }
+            }
         }
     }
 }

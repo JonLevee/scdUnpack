@@ -28,24 +28,15 @@ namespace scdUnpack
             }
         }
 
-        public void SetPathByExt(string path, string ext)
+        public void SetPathByName(string path, string name)
         {
-            switch (ext.ToLower())
-            {
-                case ".scd":
-                    GamePath = path;
-                    break;
-                case ".sc2":
-                    ModsPath = path;
-                    break;
-                default:
-                    throw new InvalidOperationException();
-            }
+            var property = GetType().GetProperty(name);
+            property?.SetValue(this, path);
         }
 
         public ScdUnpackSettings()
         {
-            ModsPath = @"D:\SC2MODS";
+            ModsPath = @"C:\SC2MODS";
             GamePath = @"C:\Program Files (x86)\Steam\steamapps\common\Supreme Commander 2\gamedata";
         }
         public static string GetSettingsFile()
